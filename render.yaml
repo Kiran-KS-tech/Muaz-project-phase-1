@@ -46,7 +46,6 @@ services:
   # 4. Admin Panel Web Client (React + Vite Static Site)
   - type: web
     name: fleet-admin-panel-muaz
-    plan: free
     runtime: static
     buildCommand: "cd admin-frontend && npm install && npm run build"
     staticPublishPath: "admin-frontend/dist"
