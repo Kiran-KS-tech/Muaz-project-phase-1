@@ -9,7 +9,6 @@ services:
   # 2. Managed Redis/Valkey Cache & Queue
   - type: keyvalue
     name: fleet-redis
-    plan: free
 
   # 3. Backend API Service (Runs Django, Celery Worker, and Celery Beat Scheduler)
   - type: web
@@ -50,7 +49,10 @@ services:
     publishDir: "dist"
     envVars:
       - key: VITE_API_URL
-        value: "https://fleet-backend.onrender.com"
+        fromService:
+          type: web
+          name: fleet-backend
+          property: host
     routes:
       - type: rewrite
         source: "/*"
