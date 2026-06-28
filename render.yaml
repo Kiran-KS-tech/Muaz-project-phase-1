@@ -43,12 +43,12 @@ services:
         value: "15.0"
 
   # 4. Admin Panel Web Client (React + Vite Static Site)
-  - type: static
+  - type: web
     name: fleet-admin-panel-muaz
-    rootDirectory: admin-frontend
     plan: free
-    buildCommand: "npm install && npm run build"
-    publishDir: "dist"
+    runtime: static
+    buildCommand: "cd admin-frontend && npm install && npm run build"
+    staticPublishPath: "admin-frontend/dist"
     envVars:
       - key: VITE_API_URL
         value: "https://fleet-backend-muaz.onrender.com"
