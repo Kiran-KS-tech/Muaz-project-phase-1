@@ -12,6 +12,7 @@ services:
   - type: redis
     name: fleet-redis-muaz
     plan: free
+    ipAllowList: []
 
   # 3. Backend API Service (Runs Django, Celery Worker, and Celery Beat Scheduler)
   - type: web
