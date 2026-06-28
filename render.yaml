@@ -6,8 +6,8 @@ databases:
     plan: free
 
 services:
-  # 2. Managed Redis Cache & Queue
-  - type: redis
+  # 2. Managed Redis/Valkey Cache & Queue
+  - type: keyvalue
     name: fleet-redis
     plan: free
 
@@ -32,7 +32,7 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: redis
+          type: keyvalue
           name: fleet-redis
           property: connectionString
       - key: OCR_PROVIDER
@@ -55,7 +55,7 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: redis
+          type: keyvalue
           name: fleet-redis
           property: connectionString
       - key: OCR_PROVIDER
@@ -76,7 +76,7 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: redis
+          type: keyvalue
           name: fleet-redis
           property: connectionString
       - key: OCR_PROVIDER
