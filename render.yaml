@@ -16,7 +16,7 @@ services:
   # 3. Backend API Service (Runs Django, Celery Worker, and Celery Beat Scheduler)
   - type: web
     name: fleet-backend-muaz
-    rootDirectory: backend
+    rootDir: backend
     plan: free
     runtime: python
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
