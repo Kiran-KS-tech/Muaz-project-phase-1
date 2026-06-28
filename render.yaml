@@ -1,10 +1,12 @@
-services:
+# Render Blueprint Manifest - Fleet Management System
+
+databases:
   # 1. Managed PostgreSQL Database
-  - type: db
-    name: fleet-db
+  - name: fleet-db
     plan: free
     ipAllowList: [] # only allow internal services
 
+services:
   # 2. Managed Redis Cache & Queue
   - type: redis
     name: fleet-redis
