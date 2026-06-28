@@ -2,17 +2,19 @@
 
 databases:
   # 1. Managed PostgreSQL Database
-  - name: fleet-db
+  - name: fleet-db-muaz
+    databaseName: fleet_db_muaz
+    user: fleet_user_muaz
     plan: free
 
 services:
   # 2. Managed Redis/Valkey Cache & Queue
   - type: keyvalue
-    name: fleet-redis
+    name: fleet-redis-muaz
 
   # 3. Backend API Service (Runs Django, Celery Worker, and Celery Beat Scheduler)
   - type: web
-    name: fleet-backend
+    name: fleet-backend-muaz
     rootDirectory: backend
     plan: free
     runtime: python
@@ -27,12 +29,12 @@ services:
         value: "*"
       - key: DATABASE_URL
         fromDatabase:
-          name: fleet-db
+          name: fleet-db-muaz
           property: connectionString
       - key: REDIS_URL
         fromService:
           type: keyvalue
-          name: fleet-redis
+          name: fleet-redis-muaz
           property: connectionString
       - key: OCR_PROVIDER
         value: "mock"
@@ -41,7 +43,7 @@ services:
 
   # 4. Admin Panel Web Client (React + Vite)
   - type: web
-    name: fleet-admin-panel
+    name: fleet-admin-panel-muaz
     rootDirectory: admin-frontend
     plan: free
     runtime: static
@@ -49,10 +51,7 @@ services:
     publishDir: "dist"
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: fleet-backend
-          property: host
+        value: "https://fleet-backend-muaz.onrender.com"
     routes:
       - type: rewrite
         source: "/*"
