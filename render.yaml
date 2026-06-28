@@ -4,14 +4,12 @@ databases:
   # 1. Managed PostgreSQL Database
   - name: fleet-db
     plan: free
-    ipAllowList: [] # only allow internal services
 
 services:
   # 2. Managed Redis Cache & Queue
   - type: redis
     name: fleet-redis
     plan: free
-    ipAllowList: []
 
   # 3. Backend API Service
   - type: web
@@ -33,7 +31,7 @@ services:
           name: fleet-db
           property: connectionString
       - key: REDIS_URL
-        fromConnection:
+        fromService:
           type: redis
           name: fleet-redis
           property: connectionString
@@ -56,7 +54,7 @@ services:
           name: fleet-db
           property: connectionString
       - key: REDIS_URL
-        fromConnection:
+        fromService:
           type: redis
           name: fleet-redis
           property: connectionString
@@ -77,7 +75,7 @@ services:
           name: fleet-db
           property: connectionString
       - key: REDIS_URL
-        fromConnection:
+        fromService:
           type: redis
           name: fleet-redis
           property: connectionString
