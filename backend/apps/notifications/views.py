@@ -1,0 +1,27 @@
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .models import Notification
+from .serializers import NotificationSerializer
+
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # A user can only see their own notifications, or global notifications (user_id is Null)
+        user = self.request.user
+        return Notification.objects.filter(models.Q(user=user) | models.Q(user__isnull=True)).order_by('-created_at')
+
+    @action(detail=True, methods=['post'])
+    def mark_as_read(self, request, pk=None):
+        notification = self.get_object()
+        notification.is_read = True
+        notification.save(update_fields=['is_read'])
+        return Response({"status": "Notification marked as read"})
+
+    @action(detail=False, methods=['post'])
+    def mark_all_read(self, request):
+        self.get_queryset().filter(is_read=False).update(is_read=True)
+        return Response({"status": "All notifications marked as read"})

@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: fleet_db
+    environment:
+      POSTGRES_DB: fleet_db
+      POSTGRES_USER: fleet_user
+      POSTGRES_PASSWORD: fleet_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: fleet_redis
+    ports:
+      - "6379:6379"
+
+  web:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fleet_api
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=django-insecure-local-development-secret-key-12345
+      - ALLOWED_HOSTS=localhost,127.0.0.1,web
+      - DATABASE_URL=postgres://fleet_user:fleet_password@db:5432/fleet_db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - OCR_PROVIDER=mock
+    depends_on:
+      - db
+      - redis
+
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fleet_celery_worker
+    command: celery -A config worker -l info
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_URL=postgres://fleet_user:fleet_password@db:5432/fleet_db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - OCR_PROVIDER=mock
+    depends_on:
+      - db
+      - redis
+
+  celery_beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fleet_celery_beat
+    command: celery -A config beat -l info
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_URL=postgres://fleet_user:fleet_password@db:5432/fleet_db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - OCR_PROVIDER=mock
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  postgres_data:
