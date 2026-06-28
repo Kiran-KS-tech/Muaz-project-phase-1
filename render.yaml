@@ -9,8 +9,9 @@ databases:
 
 services:
   # 2. Managed Redis/Valkey Cache & Queue
-  - type: keyvalue
+  - type: redis
     name: fleet-redis-muaz
+    plan: free
 
   # 3. Backend API Service (Runs Django, Celery Worker, and Celery Beat Scheduler)
   - type: web
@@ -33,7 +34,7 @@ services:
           property: connectionString
       - key: REDIS_URL
         fromService:
-          type: keyvalue
+          type: redis
           name: fleet-redis-muaz
           property: connectionString
       - key: OCR_PROVIDER
