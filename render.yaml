@@ -42,12 +42,11 @@ services:
       - key: COMPANY_COMMISSION_PERCENTAGE
         value: "15.0"
 
-  # 4. Admin Panel Web Client (React + Vite)
-  - type: web
+  # 4. Admin Panel Web Client (React + Vite Static Site)
+  - type: static
     name: fleet-admin-panel-muaz
     rootDirectory: admin-frontend
     plan: free
-    runtime: static
     buildCommand: "npm install && npm run build"
     publishDir: "dist"
     envVars:
